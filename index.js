@@ -3,24 +3,42 @@ const inquirer = require("inquirer");
 
 const validHexString = new RegExp("^(0x)?[a-fA-F0-9]{1,6}");
 
-const validNamedColors = [
-    "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet",
-    "brown", "burlywood", "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue",
-    "darkblue", "darkcyan", "darkgray","darkgrey","darkgreen", "darkkhaki","darkmagenta", "darkolivegreen", "darkorange", "darkorchid",
+// The complete set of all 140 supported HTML named colors (includes seven alternate spellings of each occurence of grey/gray).
+// This set object is used to check if a user has provided an accurate color name
+const validNamedColors = new Set([
+    "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure",
+    "beige", "bisque", "black", "blanchedalmond", "blue", "blueviolet", "brown", "burlywood",
+    "cadetblue", "chartreuse", "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan",
+
+    "darkblue", "darkcyan", "darkgoldenrod", "darkgray", "darkgrey","darkgreen", "darkkhaki","darkmagenta", "darkolivegreen", "darkorange", "darkorchid",
     "darkred","darksalmon","darkseagreen", "darkslateblue", "darkslategray", "darkslategrey", "darkturqoise", "darkviolet","deeppink",
-    "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen", "fuchsia", "gainsboro", "ghostwhite", "gold",
-    "goldenrod", "gray", "grey", "green", "greenyellow", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender", "lavenderblush",
-    "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgrey", "lightgreen",
-    "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime",
-    "limegreen", "linen", "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumblue", "mediumpurple", "mediumseagreen",
-    "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin", "navajowhite",
-    "navy", "oldlace", "olive","olivedrab", "orange", "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred",
-    "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "rebeccapurple", "red", "rosybrown", "royalblue", "saddlebrown",
-    "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue",
-    "tan", "teal", "thistle", "tomato", "turquoise", "violet", "wheat", "white", "whitesmoke", "yellow", "yellowgreen"
-]
+    "deepskyblue", "dimgray", "dimgrey", "dodgerblue",
+
+    "firebrick", "floralwhite", "forestgreen", "fuchsia",
+    "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "grey", "green", "greenyellow",
+    "honeydew", "hotpink",
+    "indianred", "indigo", "ivory",
+    "khaki",
+    "lavender", "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan", "lightgoldenrodyellow", "lightgray", "lightgrey", "lightgreen",
+    "lightpink", "lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue", "lightyellow", "lime", "limegreen", "linen",
+
+    "magenta", "maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue", "mediumspringgreen",
+    "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "moccasin",
+
+    "navajowhite", "navy",
+    "oldlace", "olive","olivedrab", "orange", "orangered", "orchid",
+    "palegoldenrod", "palegreen", "paleturquoise", "palevioletred", "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple",
+    "red", "rosybrown", "royalblue",
+
+    "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell", "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen", "steelblue",
+    "tan", "teal", "thistle", "tomato", "turquoise",
+    "violet",
+    "wheat", "white", "whitesmoke",
+    "yellow", "yellowgreen"
+]);
+
 function validateColorInput(color) {
-    //
+    return validNamedColors.has(color.trim().toLowerCase()) || !!color.match(validHexString);
 }
 
 // Begin prompting the user 
@@ -37,6 +55,12 @@ function startPrompt() {
             "type": "input",
             "name": "logoColor",
             "validate": (x) => validateColorInput(x)
+        },
+        {
+            "message": "Choose the shape you would like your logo to be",
+            "type": "list",
+            "name": "shape",
+            "choices": ["Circle", "Triangle", "Square"]
         }
     ]
     inquirer
@@ -51,6 +75,4 @@ function init() {
     startPrompt();
 }
 
-//init()
-
-console.log(validNamedColors.length);
+init()
