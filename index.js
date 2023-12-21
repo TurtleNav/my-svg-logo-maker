@@ -89,9 +89,6 @@ function startPrompt() {
 
             // Quick check to see if color is a hex code so we can prepend a '#' which
             // is necessary for hex codes in svg files
-            console.log("textcolor -> ", textColor.match(validHexString));
-            console.log("logoColor -> ", logoColor.match(validHexString));
-
             if (isHexColor(textColor) && !textColor.startsWith('#')) {
                 textColor = '#' + textColor.replace('0x', '');
             }
@@ -112,10 +109,9 @@ function startPrompt() {
         })
         .then((data) => {
             const [logoText, textColor, shape, logoColor] = data;
-            console.log(`logoText -> ${logoText}\ntextColor -> ${textColor}\nshape -> ${shape}\nlogoColor -> ${logoColor}`);
             let logoString = isHexColor(logoColor) ? `${shape} with color hex code: ${logoColor}` : `${logoColor} ${shape}`;
             let textString = isHexColor(textColor) ? `hex color code: ${textColor} text` : `${textColor} colored text`;
-            console.log(`Successfully created a ${logoString} with ${textString} and saved it to logo.svg`);
+            console.log(`Successfully created a ${logoString} with ${textString} (${logoText}) and saved it to logo.svg`);
         })
 }
 
