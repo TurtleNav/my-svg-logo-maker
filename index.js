@@ -4,9 +4,8 @@ const fs = require("fs");
 
 // Import our shape classes then map their string representations to the actual class
 const {Circle, Square, Triangle} = require("./lib/shapes");
+const { start } = require("repl");
 const shapeMap = new Map([["Circle", Circle], ["Square", Square], ["Triangle", Triangle]]);
-
-const validHexString = new RegExp("^(0x|#)?[a-fA-F0-9]{6}");
 
 // The complete set of all 140 supported HTML named colors (includes seven alternate spellings of each occurence of grey/gray).
 // This set object is used to check if a user has provided an accurate color name
@@ -42,19 +41,34 @@ const validNamedColors = new Set([
     "yellow", "yellowgreen"
 ]);
 
+/*
+    Regex for asserting if a string is a valid hex color string like one of
+    the following:
+        1.) 0x7abc3f
+        2.) #ABCdef
+        3.) FFFFFF
+*/
+const validHexString = new RegExp("^(0x|#)?[a-fA-F0-9]{6}");
+
+// Boolean on whether or not a color string matches the regex 'validHexString'
 function isHexColor(color) {
     return !!color.match(validHexString);
 }
 
+// Validator function for color input. First checks if the sanitized string is
+// a valid named color if not then we move on to check if it is a valid hex color.
+// If the color string is neither, the CLI will not let the user move on until
+// they input a valid named color or hex color code
 function validateColorInput(color) {
-    return validNamedColors.has(color.trim().toLowerCase()) || !!color.match(validHexString);
+    return validNamedColors.has(color.trim().toLowerCase()) || isHexColor(color);
 }
 
+// Simple file writing function. Write over any previous logo.svg file
 function writeSVG(svgText) {
     fs.writeFile("logo.svg", svgText, 'utf8', (error) => {});
 }
 
-// Begin prompting the user 
+// Begin prompting the user. This is the global entry function.
 function startPrompt() {
     const questions = [
         {
@@ -108,6 +122,7 @@ function startPrompt() {
             return [logoText, textColor, shape, logoColor];
         })
         .then((data) => {
+            // Provide the user with a feedback message that confirms their shape, text, and color choices
             const [logoText, textColor, shape, logoColor] = data;
             let logoString = isHexColor(logoColor) ? `${shape} with color hex code: ${logoColor}` : `${logoColor} ${shape}`;
             let textString = isHexColor(textColor) ? `hex color code: ${textColor} text` : `${textColor} colored text`;
@@ -115,9 +130,5 @@ function startPrompt() {
         })
 }
 
-//  Global entry point function
-function init() {
-    startPrompt();
-}
-
-init()
+// Start the CLI
+startPrompt();
