@@ -6,7 +6,7 @@ const fs = require("fs");
 const {Circle, Square, Triangle} = require("./lib/shapes");
 const shapeMap = new Map([["Circle", Circle], ["Square", Square], ["Triangle", Triangle]]);
 
-const validHexString = new RegExp("^(0x|#)?[a-fA-F0-9]{1,6}");
+const validHexString = new RegExp("^(0x|#)?[a-fA-F0-9]{6}");
 
 // The complete set of all 140 supported HTML named colors (includes seven alternate spellings of each occurence of grey/gray).
 // This set object is used to check if a user has provided an accurate color name
@@ -89,6 +89,9 @@ function startPrompt() {
 
             // Quick check to see if color is a hex code so we can prepend a '#' which
             // is necessary for hex codes in svg files
+            console.log("textcolor -> ", textColor.match(validHexString));
+            console.log("logoColor -> ", logoColor.match(validHexString));
+
             if (isHexColor(textColor) && !textColor.startsWith('#')) {
                 textColor = '#' + textColor.replace('0x', '');
             }
@@ -105,9 +108,11 @@ function startPrompt() {
 
             // render and write the text output to a SVG file: logo.svg
             writeSVG(createdShape.render());
-            return logoText, textColor, shape, logoColor;
+            return [logoText, textColor, shape, logoColor];
         })
-        .then((logoText, textColor, shape, logoColor) => {
+        .then((data) => {
+            const [logoText, textColor, shape, logoColor] = data;
+            console.log(`logoText -> ${logoText}\ntextColor -> ${textColor}\nshape -> ${shape}\nlogoColor -> ${logoColor}`);
             let logoString = isHexColor(logoColor) ? `${shape} with color hex code: ${logoColor}` : `${logoColor} ${shape}`;
             let textString = isHexColor(textColor) ? `hex color code: ${textColor} text` : `${textColor} colored text`;
             console.log(`Successfully created a ${logoString} with ${textString} and saved it to logo.svg`);
