@@ -51,9 +51,9 @@ function startPrompt() {
             "validate": (x) => x.length < 4
         },
         {
-            "message": "Enter a color you would like to render your logo as? Please enter a valid color name or hex color code",
+            "message": "Enter the color the text should be in your logo (hex color code or color name)",
             "type": "input",
-            "name": "logoColor",
+            "name": "textColor",
             "validate": (x) => validateColorInput(x)
         },
         {
@@ -61,6 +61,12 @@ function startPrompt() {
             "type": "list",
             "name": "shape",
             "choices": ["Circle", "Triangle", "Square"]
+        },
+        {
+            "message": "Enter the color your logo should be (hex color code or color name)",
+            "type": "input",
+            "name": "logoColor",
+            "validate": (x) => validateColorInput(x)
         }
     ]
     inquirer
