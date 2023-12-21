@@ -1,7 +1,12 @@
 // Import our dependencies
 const inquirer = require("inquirer");
+const fs = require("fs");
 
-const validHexString = new RegExp("^(0x)?[a-fA-F0-9]{1,6}");
+// Import our shape classes then map their string representations to the actual class
+const {Circle, Square, Triangle} = require("./lib/shapes");
+const shapeMap = new Map([["Circle", Circle], ["Square", Square], ["Triangle", Triangle]]);
+
+const validHexString = new RegExp("^(0x|#)?[a-fA-F0-9]{1,6}");
 
 // The complete set of all 140 supported HTML named colors (includes seven alternate spellings of each occurence of grey/gray).
 // This set object is used to check if a user has provided an accurate color name
@@ -37,8 +42,16 @@ const validNamedColors = new Set([
     "yellow", "yellowgreen"
 ]);
 
+function isHexColor(color) {
+    return !!color.match(validHexString);
+}
+
 function validateColorInput(color) {
     return validNamedColors.has(color.trim().toLowerCase()) || !!color.match(validHexString);
+}
+
+function writeSVG(svgText) {
+    fs.writeFile("logo.svg", svgText, 'utf8', (error) => {});
 }
 
 // Begin prompting the user 
@@ -71,9 +84,34 @@ function startPrompt() {
     ]
     inquirer
         .prompt(questions)
-        .then((answers => {
-            console.log(answers);
-        }))
+        .then((answers) => {
+            let {logoText, textColor, shape, logoColor} = answers;
+
+            // Quick check to see if color is a hex code so we can prepend a '#' which
+            // is necessary for hex codes in svg files
+            if (isHexColor(textColor) && !textColor.startsWith('#')) {
+                textColor = '#' + textColor.replace('0x', '');
+            }
+
+            if (isHexColor(logoColor) && !logoColor.startsWith('#')) {
+                logoColor = '#' + logoColor.replace('0x', '');
+            }
+
+            // Get the shape class from a string of its name
+            const shapeClass = shapeMap.get(shape);
+
+            // Create our shape
+            const createdShape = new shapeClass(logoColor, logoText, textColor);
+
+            // render and write the text output to a SVG file: logo.svg
+            writeSVG(createdShape.render());
+            return logoText, textColor, shape, logoColor;
+        })
+        .then((logoText, textColor, shape, logoColor) => {
+            let logoString = isHexColor(logoColor) ? `${shape} with color hex code: ${logoColor}` : `${logoColor} ${shape}`;
+            let textString = isHexColor(textColor) ? `hex color code: ${textColor} text` : `${textColor} colored text`;
+            console.log(`Successfully created a ${logoString} with ${textString} and saved it to logo.svg`);
+        })
 }
 
 //  Global entry point function
