@@ -1,9 +1,8 @@
 # My-SVG-Logo-Maker
 by Luc Tourangeau
 
-<video width="320" height="240" controls>
-  <source src="https://drive.google.com/file/d/1d9V_g6qD7TFYHcVmLHGeYQy0YD6dh9H9/view?usp=drive_link" type="video/webm">
-</video>
+[svg-gen-demo.webm](https://github.com/TurtleNav/my-svg-logo-maker/assets/57142468/4e51df1a-189b-4976-b96b-3f6504915798)
+
 
 
 
